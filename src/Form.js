@@ -5,22 +5,13 @@ function Form() {
   const [categories, setCategories] = useState([])
 
   const categoryEl = useRef()
+  const amountEl = useRef()
 
   useEffect(() => {
     axios.get('https://opentdb.com/api_category.php').then((res) => {
-      const categoriesArray = buildCategories(res.data.trivia_categories)
-      setCategories(categoriesArray)
+      setCategories(res.data.trivia_categories)
     })
   }, [])
-
-  function buildCategories(data) {
-    return data.map((category) => {
-      return {
-        id: category.id,
-        name: category.name,
-      }
-    })
-  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -33,12 +24,26 @@ function Form() {
         <select name='category' id='category' ref={categoryEl}>
           {categories.map((category) => {
             return (
-              <option id={category.name} key={category.id}>
+              <option id={category.id} key={category.id}>
                 {category.name}
               </option>
             )
           })}
         </select>
+      </div>
+      <div className='form-group'>
+        <label htmlFor='amount'>Number Of Questions</label>
+        <input
+          type='number'
+          id='amount'
+          min='1'
+          step='1'
+          defaultValue={10}
+          ref={amountEl}
+        />
+      </div>
+      <div className='form-group'>
+        <button className='btn'>Genarate</button>
       </div>
     </form>
   )
