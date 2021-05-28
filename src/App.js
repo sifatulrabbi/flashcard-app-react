@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import FlashcardList from './FlashcardList'
+import Form from './Form'
+import axios from 'axios'
+import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+  const [flashQuizes, setFlashQuizes] = useState([])
 
-export default App;
+  useEffect(() => {
+    axios.get('https://opentdb.com/api.php?amount=15').then((res) => {
+      const flashQuizes = buildFlashQuizes(res.data.results)
+      setFlashQuizes(flashQuizes)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  function buildFlashQuizes(data) {
+    return data.map((questionItem, index) => {
+      const answer = decodeStrings(questionItem.correct_answer)
+      const options = [
+        ...questionItem.incorrect_answers.map((str) => decodeStrings(str)),
+        answer,
+      ]
+      return {
+        id: `${index} + ${Date.now()}`,
+        question: decodeStrings(questionItem.question),
+        answer: answer,
+        options: options.sort(() => Math.random() - 0.5),
+      }
+    })
+  }
+
+  function decodeStrings(str) {
+    const textArea = document.createElement('textarea')
+    textArea.innerHTML = str
+    return textArea.value
+  }
+
+  return (
+    <>
+      <Form />
+      <div className='container'>
+        <FlashcardList quizes={flashQuizes} />
+      </div>
+    </>
+  )
+}
+export default App
