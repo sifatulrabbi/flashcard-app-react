@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import FlashcardList from './FlashcardList'
 import Form from './Form'
-import axios from 'axios'
 import './App.css'
 
 function App() {
   const [flashQuizes, setFlashQuizes] = useState([])
-
-  useEffect(() => {
-    axios.get('https://opentdb.com/api.php?amount=15').then((res) => {
-      const flashQuizes = buildFlashQuizes(res.data.results)
-      setFlashQuizes(flashQuizes)
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   function buildFlashQuizes(data) {
     return data.map((questionItem, index) => {
@@ -39,7 +30,10 @@ function App() {
 
   return (
     <>
-      <Form />
+      <Form
+        buildFlashQuizes={buildFlashQuizes}
+        setFlashQuizes={setFlashQuizes}
+      />
       <div className='container'>
         <FlashcardList quizes={flashQuizes} />
       </div>

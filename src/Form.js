@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
-function Form() {
+function Form({ setFlashQuizes, buildFlashQuizes }) {
   const [categories, setCategories] = useState([])
 
   const categoryEl = useRef()
@@ -15,6 +15,17 @@ function Form() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    axios
+      .get('https://opentdb.com/api.php?', {
+        params: {
+          amount: amountEl.current.value,
+          category: categoryEl.current.value,
+        },
+      })
+      .then((res) => {
+        const flashQuizes = buildFlashQuizes(res.data.results)
+        setFlashQuizes(flashQuizes)
+      })
   }
 
   return (
@@ -24,7 +35,7 @@ function Form() {
         <select name='category' id='category' ref={categoryEl}>
           {categories.map((category) => {
             return (
-              <option id={category.id} key={category.id}>
+              <option value={category.id} key={category.id}>
                 {category.name}
               </option>
             )
@@ -43,7 +54,9 @@ function Form() {
         />
       </div>
       <div className='form-group'>
-        <button className='btn'>Genarate</button>
+        <button className='btn' type='submit'>
+          Genarate
+        </button>
       </div>
     </form>
   )
