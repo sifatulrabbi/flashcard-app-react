@@ -1,10 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FlashcardList from './FlashcardList'
 import Form from './Form'
+import axios from 'axios'
 import './App.css'
 
 function App() {
   const [flashQuizes, setFlashQuizes] = useState([])
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    axios.get('https://opentdb.com/api_category.php').then((res) => {
+      setCategories(res.data.trivia_categories)
+    })
+  }, [])
 
   function buildFlashQuizes(data) {
     return data.map((questionItem, index) => {
@@ -33,6 +41,7 @@ function App() {
       <Form
         buildFlashQuizes={buildFlashQuizes}
         setFlashQuizes={setFlashQuizes}
+        categories={categories}
       />
       <div className='container'>
         <FlashcardList quizes={flashQuizes} />

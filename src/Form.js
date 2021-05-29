@@ -1,17 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import axios from 'axios'
 
-function Form({ setFlashQuizes, buildFlashQuizes }) {
-  const [categories, setCategories] = useState([])
-
+function Form({ setFlashQuizes, buildFlashQuizes, categories }) {
   const categoryEl = useRef()
   const amountEl = useRef()
-
-  useEffect(() => {
-    axios.get('https://opentdb.com/api_category.php').then((res) => {
-      setCategories(res.data.trivia_categories)
-    })
-  }, [])
 
   function handleSubmit(e) {
     e.preventDefault()
